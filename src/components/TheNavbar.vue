@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import firebase from '../firebase'
+import { mapActions } from 'vuex'
 export default {
   name: 'TheNavbar',
   data: function () {
@@ -36,7 +38,22 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['userLogin']),
     login: function () {
+      let provider = new firebase.auth.FacebookAuthProvider()
+      firebase.auth().signInWithPopup(provider)
+        .then(result => {
+          let user = {
+            name: result.user.displayName,
+            email: result.user.email,
+            avatar: result.user.photoURL
+          }
+          console.log(user)
+          this.userLogin(user)
+        })
+        .catch(error => {
+          alert('Oops! ' + error)
+        })
     },
     logout: function () {
     }
