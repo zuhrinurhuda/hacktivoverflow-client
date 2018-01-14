@@ -1,8 +1,8 @@
-import axios from 'axios'
+// import axios from 'axios'
 
-const http = axios.create({
-  baseURL: 'http://localhost:3000/api'
-})
+// const http = axios.create({
+//   baseURL: 'http://localhost:3000/api'
+// })
 
 const actions = {
 }
