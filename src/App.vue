@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <header>
+    <!-- <header>
       <span>Vue.js PWA</span>
-    </header>
+    </header> -->
+    <the-navbar/>
     <main>
       <img src="./assets/logo.png" alt="Vue.js PWA">
       <router-view></router-view>
@@ -11,13 +12,17 @@
 </template>
 
 <script>
+import TheNavbar from '@/components/TheNavbar'
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    TheNavbar
+  }
 }
 </script>
 
 <style>
-body {
+/* body {
   margin: 0;
 }
 
@@ -50,5 +55,5 @@ header span {
   font-weight: 400;
   box-sizing: border-box;
   padding-top: 16px;
-}
+} */
 </style>
