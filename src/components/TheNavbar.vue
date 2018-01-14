@@ -5,12 +5,12 @@
         <i class="home icon"></i>
         <span>Home</span>
       </router-link>
-      <router-link class="item" to="" v-if="token">
+      <router-link class="item" to="" v-if="isLogin">
         <i class="dashboard icon"></i>
         <span>Dashboard</span>
       </router-link>
       <div id="remove" class="right item">
-        <div v-if="token">
+        <div v-if="isLogin">
           <button class="ui facebook button" @click="logout">
             <i class="sign out icon"></i>
             <span>Sign out</span>
@@ -24,6 +24,7 @@
         </div>
       </div>
     </nav>
+    {{ isLogin }}
   </header>
 </template>
 
@@ -34,7 +35,7 @@ export default {
   name: 'TheNavbar',
   data: function () {
     return {
-      token: null
+      isLogin: false
     }
   },
   methods: {
@@ -48,15 +49,34 @@ export default {
             email: result.user.email,
             avatar: result.user.photoURL
           }
-          console.log(user)
           this.userLogin(user)
+            .then(accesstoken => {
+              if (accesstoken) {
+                localStorage.setItem('accesstoken', accesstoken)
+                this.isLogin = true
+              } else {
+                // jika tidak mendapat token dari server, login dianggap gagal
+                alert('Login failed. Please try again!')
+                firebase.auth().signOut()
+              }
+            })
         })
-        .catch(error => {
-          alert('Oops! ' + error)
-        })
+        .catch(error => alert('Oops! ' + error))
     },
     logout: function () {
+      firebase.auth().signOut()
+        .then(() => {
+          localStorage.removeItem('accesstoken')
+          this.isLogin = false
+        })
+        .catch(error => alert('Oops! ' + error))
+    },
+    checkLoginStatus: function () {
+      localStorage.getItem('accesstoken') ? this.isLogin = true : this.isLogin = false
     }
+  },
+  mounted: function () {
+    this.checkLoginStatus()
   }
 }
 </script>
