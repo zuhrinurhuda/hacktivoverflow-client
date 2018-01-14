@@ -24,7 +24,6 @@
         </div>
       </div>
     </nav>
-    {{ isLogin }}
   </header>
 </template>
 
@@ -32,7 +31,7 @@
 import firebase from '../firebase'
 import { mapActions } from 'vuex'
 export default {
-  name: 'TheNavbar',
+  name: 'navbar',
   data: function () {
     return {
       isLogin: false
