@@ -4,6 +4,10 @@ const http = axios.create({
   baseURL: 'http://localhost:3000/api'
 })
 
+const config = {
+  headers: { accesstoken: localStorage.getItem('accesstoken') }
+}
+
 const actions = {
   userLogin: ({ commit }, userData) => {
     return new Promise((resolve, reject) => {
@@ -11,6 +15,35 @@ const actions = {
         .then(({ data }) => resolve(data.accesstoken))
         .catch(err => reject(err))
     })
+  },
+  addNewQuestion: ({ commit }, question) => {
+    http.post('/questions', question, config)
+      .then(({ data }) => commit('setNewQuestion', data.newQuestion))
+      .catch(err => console.log(err))
+  },
+  getAllQuestions: ({ commit }) => {
+    http.get('/questions')
+      .then(({ data }) => commit('setQuestions', data.questions))
+      .catch(err => console.log(err))
+  },
+  getQuestionById: ({ commit }, id) => {
+    http.get('/questions/' + id)
+      .then(({ data }) => commit('setQuestion', data.question))
+      .catch(err => console.log(err))
+  },
+  getAnswersByQuestionId: ({ commit }, id) => {
+    http.get('/answers/questions/' + id)
+      .then(({ data }) => commit('setAnswers', data.answers))
+      .catch(err => console.log(err))
+  },
+  addNewAnswer: ({ commit }, answer) => {
+    http.post('/answers', answer, config)
+      .then(({ data }) => {
+        http.get('/answers/' + data.newAnswer._id)
+          .then(({ data }) => commit('setNewAnswer', data.answer))
+          .catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
   }
 }
 

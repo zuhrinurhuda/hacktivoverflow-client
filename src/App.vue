@@ -3,20 +3,23 @@
     <!-- <header>
       <span>Vue.js PWA</span>
     </header> -->
-    <the-navbar/>
-    <main>
+    <!-- <main> -->
       <!-- <img src="./assets/logo.png" alt="Vue.js PWA"> -->
-      <router-view></router-view>
-    </main>
+    <!-- </main> -->
+    <navbar-component/>
+    <router-view></router-view>
+    <modal-component/>
   </div>
 </template>
 
 <script>
-import TheNavbar from '@/components/TheNavbar'
+import NavbarComponent from '@/components/NavbarComponent'
+import ModalComponent from '@/components/ModalComponent'
 export default {
   name: 'app',
   components: {
-    TheNavbar
+    NavbarComponent,
+    ModalComponent
   }
 }
 </script>
