@@ -1,7 +1,7 @@
 <template>
   <header class="ui attached stackable menu">
     <nav class="ui container">
-      <router-link class="item" to="">
+      <router-link class="item" :to="{ name: 'home' }">
         <i class="home icon"></i>
         <span>Home</span>
       </router-link>
@@ -9,7 +9,7 @@
         <i class="dashboard icon"></i>
         <span>Dashboard</span>
       </router-link>
-      <div id="remove" class="right item">
+      <div class="right item">
         <div v-if="isLogin">
           <button class="ui facebook button" @click="logout">
             <i class="sign out icon"></i>

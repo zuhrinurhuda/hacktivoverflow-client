@@ -8,13 +8,13 @@
         <button class="ui positive button" @click="askQuestion">Ask Question</button>
       </div>
     </div>
-    <questions-summaries v-for="(question, index) in questions" :question="question" :key="index"></questions-summaries>
+    <questions-summaries v-for="question in questions" :question="question" :key="question._id"></questions-summaries>
   </main>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
 import QuestionsSummaries from '@/components/QuestionsSummaries'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'home',
   components: {
@@ -35,5 +35,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.ui.grid {
+  margin: 1rem;
+}
+
+.ui.grid>.row {
+  padding-top: 0;
+  padding-bottom: 0;
+}
 </style>
