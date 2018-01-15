@@ -29,7 +29,7 @@
 
 <script>
 import firebase from '../firebase'
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 export default {
   name: 'navbar',
   data: function () {
@@ -38,7 +38,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['userLogin']),
+    ...mapActions([
+      'userLogin',
+      'userProfile' // handle data user ketika page direfresh/reload
+    ]),
+    ...mapMutations(['setUserProfile']),
     login: function () {
       let provider = new firebase.auth.FacebookAuthProvider()
       firebase.auth().signInWithPopup(provider)
@@ -65,6 +69,7 @@ export default {
     logout: function () {
       firebase.auth().signOut()
         .then(() => {
+          this.setUserProfile(null)
           localStorage.removeItem('accesstoken')
           this.isLogin = false
         })
@@ -75,6 +80,7 @@ export default {
     }
   },
   mounted: function () {
+    if (localStorage.getItem('accesstoken')) this.userProfile()
     this.checkLoginStatus()
   }
 }

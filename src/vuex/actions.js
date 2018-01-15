@@ -12,7 +12,10 @@ const actions = {
   userLogin: ({ commit }, userData) => {
     return new Promise((resolve, reject) => {
       http.post('/users', userData)
-        .then(({ data }) => resolve(data.accesstoken))
+        .then(({ data }) => {
+          commit('setUserProfile', data.user)
+          resolve(data.accesstoken)
+        })
         .catch(err => reject(err))
     })
   },

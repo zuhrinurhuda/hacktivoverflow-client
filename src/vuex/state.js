@@ -1,7 +1,7 @@
 const state = {
-  user: {},
+  user: null,
   questions: [],
-  question: {},
+  question: null,
   answers: []
 }
 

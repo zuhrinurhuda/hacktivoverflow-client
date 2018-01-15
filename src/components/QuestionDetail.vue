@@ -26,100 +26,49 @@
                     {{ question.downVoters.length }}
                     <i class="thumbs outline down icon"></i>
                   </a>
-                  <a class="edit">Edit</a>
-                  <a class="delete" v-if="user._id === question.author._id" @click="submitDeleteQuestion(question._id)">Delete</a>
+                  <span v-if="user">
+                    <a class="edit">Edit</a>
+                    <a class="delete" v-if="user._id === question.author._id" @click="submitDeleteQuestion(question._id)">Delete</a>
+                  </span>
                 </div>
               </div>
-              <div class="comments">
-                <div class="comment" v-for="answer in answers" :key="answer._id">
-                  <a class="avatar" v-if="answer.author">
-                    <img :src="answer.author.avatar">
-                  </a>
-                  <div class="content" v-if="answer.author">
-                    <a class="author">{{ answer.author.name }}</a>
-                    <div class="metadata">
-                      <span class="date">{{ new Date(answer.createdAt).toDateString() }}</span>
-                    </div>
-                    <div class="text">{{ answer.content }}</div>
-                    <div class="actions" v-if="answer.upVoters">
-                      <a class="upVoters" v-if="answer.upVoters">
-                        {{ answer.upVoters.length }}
-                        <i class="thumbs outline up icon"></i>
-                      </a>
-                      <a class="downVoters" v-if="answer.upVoters">
-                        {{ answer.downVoters.length }}
-                        <i class="thumbs outline down icon"></i>
-                      </a>
-                      <a class="delete" v-if="user._id === answer.author._id" @click="submitDeleteAnswer(answer._id)">Delete</a>
-                    </div>
-                  </div>
-                </div>
-                <form class="ui reply form">
-                  <div class="field">
-                    <textarea v-model="answer"></textarea>
-                  </div>
-                  <div class="ui blue labeled submit icon button" @click="submitAddAnswer(question._id)">
-                    <i class="icon edit"></i>Add Answer
-                  </div>
-                </form>
-              </div>
+              <!-- <answer-list :user="user" :question="question"></answer-list> -->
             </div>
           </div>
         </div>
       </div>
     </div>
+    {{ user }}
   </main>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import AnswerList from '@/components/AnswerList'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'detail',
   props: ['id'],
-  data: function () {
-    return {
-      answer: ''
-    }
+  components: {
+    AnswerList
   },
   computed: {
     ...mapState([
       'user',
-      'question',
-      'answers'
+      'question'
     ])
   },
   methods: {
     ...mapActions([
-      'userProfile',
       'getQuestionById',
-      'getAnswersByQuestionId',
-      'addNewAnswer',
-      'deleteQuestion',
-      'deleteAnswer'
+      'deleteQuestion'
     ]),
-    ...mapMutations(['setDeletedAnswer']),
-    submitAddAnswer: function (id) {
-      let newAnswer = {
-        question: id,
-        content: this.answer
-      }
-
-      this.addNewAnswer(newAnswer)
-      this.answer = ''
-    },
     submitDeleteQuestion: function (id) {
       this.deleteQuestion(id)
         .then(() => this.$router.replace({ name: 'home' }))
-    },
-    submitDeleteAnswer: function (id) {
-      this.setDeletedAnswer(id)
-      this.deleteAnswer(id)
     }
   },
   mounted: function () {
-    this.userProfile()
     this.getQuestionById(this.id)
-    this.getAnswersByQuestionId(this.id)
   }
 }
 </script>
