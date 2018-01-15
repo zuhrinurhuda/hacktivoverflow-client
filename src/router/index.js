@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomePage from '@/components/HomePage'
+import HomeComponent from '@/components/HomeComponent'
 import QuestionsSummaries from '@/components/QuestionsSummaries'
-import DetailPage from '@/components/DetailPage'
+import QuestionDetail from '@/components/QuestionDetail'
 
 Vue.use(Router)
 
@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: HomePage,
+      component: HomeComponent,
       children: [
         {
           path: '',
@@ -22,7 +22,7 @@ export default new Router({
     {
       path: '/questions/:id',
       name: 'detail',
-      component: DetailPage,
+      component: QuestionDetail,
       props: true
     }
   ]

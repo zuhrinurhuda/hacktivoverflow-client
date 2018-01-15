@@ -94,6 +94,7 @@ export default {
       'getQuestionById',
       'getAnswersByQuestionId',
       'addNewAnswer',
+      'deleteQuestion',
       'deleteAnswer'
     ]),
     ...mapMutations(['setDeletedAnswer']),
@@ -108,6 +109,7 @@ export default {
     },
     submitDeleteQuestion: function (id) {
       this.deleteQuestion(id)
+        .then(() => this.$router.replace({ name: 'home' }))
     },
     submitDeleteAnswer: function (id) {
       this.setDeletedAnswer(id)

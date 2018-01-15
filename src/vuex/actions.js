@@ -50,6 +50,13 @@ const actions = {
       })
       .catch(err => console.log(err))
   },
+  deleteQuestion: ({ commit }, id) => {
+    return new Promise((resolve, reject) => {
+      http.delete('/questions/' + id, config)
+        .then(({ data }) => resolve(data.deletedQuestion))
+        .catch(err => console.log(err))
+    })
+  },
   deleteAnswer: ({ commit }, id) => {
     http.delete('/answers/' + id, config)
       .then(({ data }) => console.log(data))
