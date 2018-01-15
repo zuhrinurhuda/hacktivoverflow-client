@@ -26,7 +26,8 @@
                     {{ question.downVoters.length }}
                     <i class="thumbs outline down icon"></i>
                   </a>
-                  <a class="delete">Delete</a>
+                  <a class="edit">Edit</a>
+                  <a class="delete" v-if="user._id === question.author._id" @click="submitDeleteQuestion(question._id)">Delete</a>
                 </div>
               </div>
               <div class="comments">
@@ -49,7 +50,7 @@
                         {{ answer.downVoters.length }}
                         <i class="thumbs outline down icon"></i>
                       </a>
-                      <a class="delete">Delete</a>
+                      <a class="delete" v-if="user._id === answer.author._id" @click="submitDeleteAnswer(answer._id)">Delete</a>
                     </div>
                   </div>
                 </div>
@@ -57,7 +58,7 @@
                   <div class="field">
                     <textarea v-model="answer"></textarea>
                   </div>
-                  <div class="ui blue labeled submit icon button" @click="submitAnswer(question._id)">
+                  <div class="ui blue labeled submit icon button" @click="submitAddAnswer(question._id)">
                     <i class="icon edit"></i>Add Answer
                   </div>
                 </form>
@@ -71,7 +72,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 export default {
   name: 'detail',
   props: ['id'],
@@ -81,11 +82,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(['question', 'answers'])
+    ...mapState([
+      'user',
+      'question',
+      'answers'
+    ])
   },
   methods: {
-    ...mapActions(['getQuestionById', 'getAnswersByQuestionId', 'addNewAnswer']),
-    submitAnswer: function (id) {
+    ...mapActions([
+      'userProfile',
+      'getQuestionById',
+      'getAnswersByQuestionId',
+      'addNewAnswer',
+      'deleteAnswer'
+    ]),
+    ...mapMutations(['setDeletedAnswer']),
+    submitAddAnswer: function (id) {
       let newAnswer = {
         question: id,
         content: this.answer
@@ -93,9 +105,17 @@ export default {
 
       this.addNewAnswer(newAnswer)
       this.answer = ''
+    },
+    submitDeleteQuestion: function (id) {
+      this.deleteQuestion(id)
+    },
+    submitDeleteAnswer: function (id) {
+      this.setDeletedAnswer(id)
+      this.deleteAnswer(id)
     }
   },
   mounted: function () {
+    this.userProfile()
     this.getQuestionById(this.id)
     this.getAnswersByQuestionId(this.id)
   }

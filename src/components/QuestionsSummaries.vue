@@ -47,5 +47,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+div.two.column.row {
+  padding-top: 0;
+}
 </style>

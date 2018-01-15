@@ -16,6 +16,11 @@ const actions = {
         .catch(err => reject(err))
     })
   },
+  userProfile: ({ commit }) => {
+    http.get('/users/profile', config)
+      .then(({ data }) => commit('setUserProfile', data.user))
+      .catch(err => console.log(err))
+  },
   addNewQuestion: ({ commit }, question) => {
     http.post('/questions', question, config)
       .then(({ data }) => commit('setNewQuestion', data.newQuestion))
@@ -43,6 +48,11 @@ const actions = {
           .then(({ data }) => commit('setNewAnswer', data.answer))
           .catch(err => console.log(err))
       })
+      .catch(err => console.log(err))
+  },
+  deleteAnswer: ({ commit }, id) => {
+    http.delete('/answers/' + id, config)
+      .then(({ data }) => console.log(data))
       .catch(err => console.log(err))
   }
 }
