@@ -10,12 +10,12 @@
           <span class="date">{{ new Date(answer.createdAt).toDateString() }}</span>
         </div>
         <div class="text">{{ answer.content }}</div>
-        <div class="actions" v-if="answer.upVoters">
-          <a class="upVoters" v-if="answer.upVoters">
+        <div class="actions">
+          <a class="upVoters" v-if="answer.upVoters" @click="submitUpVote(answer)">
             {{ answer.upVoters.length }}
             <i class="thumbs outline up icon"></i>
           </a>
-          <a class="downVoters" v-if="answer.upVoters">
+          <a class="downVoters" v-if="answer.upVoters" @click="submitDownVote(answer)">
             {{ answer.downVoters.length }}
             <i class="thumbs outline down icon"></i>
           </a>
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <form class="ui reply form">
+    <form class="ui reply form" v-if="user">
       <div class="field">
         <textarea v-model="answer"></textarea>
       </div>
@@ -54,17 +54,68 @@ export default {
     ...mapActions([
       'getAnswersByQuestionId',
       'addNewAnswer',
+      'upVoteAnswer',
+      'downVoteAnswer',
       'deleteAnswer'
     ]),
-    ...mapMutations(['setDeletedAnswer']),
+    ...mapMutations([
+      'setUpdatedAnswer',
+      'setDeletedAnswer'
+    ]),
     submitAddAnswer: function () {
-      let newAnswer = {
-        question: this.id,
-        content: this.answer
-      }
+      if (this.user) {
+        let newAnswer = {
+          question: this.id,
+          content: this.answer
+        }
 
-      this.addNewAnswer(newAnswer)
-      this.answer = ''
+        this.addNewAnswer(newAnswer)
+        this.answer = ''
+      } else {
+        // nothing
+      }
+    },
+    submitUpVote: function (answer) {
+      if (this.user) {
+        // try using optimistic method
+        let userUpVoteIndex = answer.upVoters.findIndex(element => element === this.user._id)
+        let userDownVoteIndex = answer.downVoters.findIndex(element => element === this.user._id)
+
+        if (userUpVoteIndex === -1 && userDownVoteIndex === -1) { // false && false
+          answer.upVoters.push(this.user._id)
+        } else if (userUpVoteIndex === -1 && userDownVoteIndex !== -1) { // false && true
+          answer.downVoters.splice(userDownVoteIndex, 1)
+          answer.upVoters.push(this.user._id)
+        } else if (userUpVoteIndex !== -1 && userDownVoteIndex === -1) { // true && false
+          answer.upVoters.splice(userUpVoteIndex, 1)
+        }
+
+        this.setUpdatedAnswer(answer)
+        this.upVoteAnswer(answer._id)
+      } else {
+        // nothing
+      }
+    },
+    submitDownVote: function (answer) {
+      if (this.user) {
+        // try using optimistic method
+        let userUpVoteIndex = answer.upVoters.findIndex(element => element === this.user._id)
+        let userDownVoteIndex = answer.downVoters.findIndex(element => element === this.user._id)
+
+        if (userDownVoteIndex === -1 && userUpVoteIndex === -1) { // false && false
+          answer.downVoters.push(this.user._id)
+        } else if (userDownVoteIndex === -1 && userUpVoteIndex !== -1) { // false && true
+          answer.upVoters.splice(userUpVoteIndex, 1)
+          answer.downVoters.push(this.user._id)
+        } else if (userDownVoteIndex !== -1 && userUpVoteIndex === -1) { // true && false
+          answer.downVoters.splice(userDownVoteIndex, 1)
+        }
+
+        this.setUpdatedAnswer(answer)
+        this.downVoteAnswer(answer._id)
+      } else {
+        // nothing
+      }
     },
     submitDeleteAnswer: function (id) {
       this.setDeletedAnswer(id)

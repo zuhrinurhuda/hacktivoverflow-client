@@ -43,7 +43,6 @@ export default {
   methods: {
     ...mapActions(['addNewQuestion']),
     submitQuestion: function () {
-      console.log('component', this.newQuestion)
       this.addNewQuestion(this.newQuestion)
     }
   }

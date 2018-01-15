@@ -18,6 +18,10 @@ const mutations = {
     state.answers = payload
   },
   setNewAnswer: (state, payload) => state.answers.push(payload),
+  setUpdatedAnswer: (state, payload) => {
+    let index = state.answers.findIndex(answer => answer._id === payload._id)
+    state.answers.splice(index, 1, payload)
+  },
   setDeletedAnswer: (state, payload) => {
     let filteredAnswer = state.answers.filter(answer => answer._id !== payload)
     state.answers = filteredAnswer

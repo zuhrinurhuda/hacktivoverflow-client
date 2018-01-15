@@ -37,7 +37,11 @@ const actions = {
     http.post('/questions', question, {
       headers: { accesstoken: localStorage.getItem('accesstoken') }
     })
-      .then(({ data }) => commit('setNewQuestion', data.newQuestion))
+      .then(({ data }) => {
+        http.get('/questions/' + data.newQuestion._id)
+          .then(({ data }) => commit('setNewQuestion', data.question))
+          .catch(err => console.log(err))
+      })
       .catch(err => console.log(err))
   },
   deleteQuestion: ({ commit }, id) => {
@@ -90,7 +94,30 @@ const actions = {
     http.delete('/answers/' + id, {
       headers: { accesstoken: localStorage.getItem('accesstoken') }
     })
-      .then(({ data }) => console.log(data))
+      .then(({ data }) => {
+        // console.log(data.result)
+        // optimistic
+      })
+      .catch(err => console.log(err))
+  },
+  upVoteAnswer: ({ commit }, id) => {
+    http.put('/answers/' + id + '/upvote', {}, {
+      headers: { accesstoken: localStorage.getItem('accesstoken') }
+    })
+      .then(({ data }) => {
+        // console.log(data.updatedAnswer.upVoters)
+        // optimistic
+      })
+      .catch(err => console.log(err))
+  },
+  downVoteAnswer: ({ commit }, id) => {
+    http.put('/answers/' + id + '/downvote', {}, {
+      headers: { accesstoken: localStorage.getItem('accesstoken') }
+    })
+      .then(({ data }) => {
+        // console.log(data.updatedAnswer.downVoters)
+        // optimistic
+      })
       .catch(err => console.log(err))
   }
 }

@@ -38,8 +38,6 @@
         </div>
       </div>
     </div>
-    {{ question.upVoters }}
-    {{ question.downVoters }}
   </main>
 </template>
 
@@ -61,48 +59,56 @@ export default {
   methods: {
     ...mapActions([
       'getQuestionById',
-      'deleteQuestion',
       'upVoteQuestion',
-      'downVoteQuestion'
+      'downVoteQuestion',
+      'deleteQuestion'
     ]),
     ...mapMutations(['setUpdatedQuestion']),
+    submitUpVote: function (question) {
+      if (this.user) {
+        // try using optimistic method
+        let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
+        let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
+
+        if (userUpVoteIndex === -1 && userDownVoteIndex === -1) { // false && false
+          question.upVoters.push(this.user._id)
+        } else if (userUpVoteIndex === -1 && userDownVoteIndex !== -1) { // false && true
+          question.downVoters.splice(userDownVoteIndex, 1)
+          question.upVoters.push(this.user._id)
+        } else if (userUpVoteIndex !== -1 && userDownVoteIndex === -1) { // true && false
+          question.upVoters.splice(userUpVoteIndex, 1)
+        }
+
+        this.setUpdatedQuestion(question)
+        this.upVoteQuestion(question._id)
+      } else {
+        // nothing
+      }
+    },
+    submitDownVote: function (question) {
+      if (this.user) {
+        // try using optimistic method
+        let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
+        let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
+
+        if (userDownVoteIndex === -1 && userUpVoteIndex === -1) { // false && false
+          question.downVoters.push(this.user._id)
+        } else if (userDownVoteIndex === -1 && userUpVoteIndex !== -1) { // false && true
+          question.upVoters.splice(userUpVoteIndex, 1)
+          question.downVoters.push(this.user._id)
+        } else if (userDownVoteIndex !== -1 && userUpVoteIndex === -1) { // true && false
+          question.downVoters.splice(userDownVoteIndex, 1)
+        }
+
+        this.setUpdatedQuestion(question)
+        this.downVoteQuestion(question._id)
+      } else {
+        // nothing
+      }
+    },
     submitDeleteQuestion: function (id) {
       this.deleteQuestion(id)
         .then(() => this.$router.replace({ name: 'home' }))
-    },
-    submitUpVote: function (question) {
-      // try using optimistic method
-      let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
-      let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
-
-      if (userUpVoteIndex === -1 && userDownVoteIndex === -1) { // false && false
-        question.upVoters.push(this.user._id)
-      } else if (userUpVoteIndex === -1 && userDownVoteIndex !== -1) { // false && true
-        question.downVoters.splice(userDownVoteIndex, 1)
-        question.upVoters.push(this.user._id)
-      } else if (userUpVoteIndex !== -1 && userDownVoteIndex === -1) { // true && false
-        question.upVoters.splice(userUpVoteIndex, 1)
-      }
-
-      this.setUpdatedQuestion(question)
-      this.upVoteQuestion(question._id)
-    },
-    submitDownVote: function (question) {
-      // try using optimistic method
-      let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
-      let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
-
-      if (userDownVoteIndex === -1 && userUpVoteIndex === -1) { // false && false
-        question.downVoters.push(this.user._id)
-      } else if (userDownVoteIndex === -1 && userUpVoteIndex !== -1) { // false && true
-        question.upVoters.splice(userUpVoteIndex, 1)
-        question.downVoters.push(this.user._id)
-      } else if (userDownVoteIndex !== -1 && userUpVoteIndex === -1) { // true && false
-        question.downVoters.splice(userDownVoteIndex, 1)
-      }
-
-      this.setUpdatedQuestion(question)
-      this.downVoteQuestion(question._id)
     }
   },
   mounted: function () {
