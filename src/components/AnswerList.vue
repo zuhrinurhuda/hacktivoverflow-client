@@ -1,6 +1,6 @@
 <template>
   <div class="comments">
-    <!-- <div class="comment" v-for="answer in answers" :key="answer._id">
+    <div class="comment" v-for="answer in answers" :key="answer._id">
       <a class="avatar" v-if="answer.author">
         <img :src="answer.author.avatar">
       </a>
@@ -19,7 +19,7 @@
             {{ answer.downVoters.length }}
             <i class="thumbs outline down icon"></i>
           </a>
-          <a class="delete" v-if="user._id === answer.author._id" @click="submitDeleteAnswer(answer._id)">Delete</a>
+          <a class="delete" v-if="user && user._id === answer.author._id" @click="submitDeleteAnswer(answer._id)">Delete</a>
         </div>
       </div>
     </div>
@@ -27,12 +27,10 @@
       <div class="field">
         <textarea v-model="answer"></textarea>
       </div>
-      <div class="ui blue labeled submit icon button" @click="submitAddAnswer(question._id)">
+      <div class="ui blue labeled submit icon button" @click="submitAddAnswer">
         <i class="icon edit"></i>Add Answer
       </div>
-    </form> -->
-    <!-- {{user}} -->
-    <!-- {{question}} -->
+    </form>
   </div>
 </template>
 
@@ -40,14 +38,17 @@
 import { mapActions, mapMutations, mapState } from 'vuex'
 export default {
   name: 'answer',
-  props: ['user', 'question'],
+  props: ['id'],
   data: function () {
     return {
       answer: ''
     }
   },
   computed: {
-    ...mapState(['answers'])
+    ...mapState([
+      'user',
+      'answers'
+    ])
   },
   methods: {
     ...mapActions([
@@ -56,9 +57,9 @@ export default {
       'deleteAnswer'
     ]),
     ...mapMutations(['setDeletedAnswer']),
-    submitAddAnswer: function (id) {
+    submitAddAnswer: function () {
       let newAnswer = {
-        question: id,
+        question: this.id,
         content: this.answer
       }
 
@@ -71,8 +72,7 @@ export default {
     }
   },
   mounted: function () {
-    // console.log(this.question._id)
-    // this.getAnswersByQuestionId(this.question._id)
+    this.getAnswersByQuestionId(this.id)
   }
 }
 </script>

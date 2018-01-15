@@ -5,7 +5,7 @@
         <h2 class="ui header">Lates Questions</h2>
       </div>
       <div class="right aligned column">
-        <button class="ui positive button" @click="askQuestion">Ask Question</button>
+        <button class="ui positive button" v-if="user" @click="askQuestion">Ask Question</button>
       </div>
     </div>
     <questions-summaries v-for="question in questions" :question="question" :key="question._id"></questions-summaries>
@@ -21,7 +21,10 @@ export default {
     QuestionsSummaries
   },
   computed: {
-    ...mapState(['questions'])
+    ...mapState([
+      'user',
+      'questions'
+    ])
   },
   methods: {
     ...mapActions(['getAllQuestions']),

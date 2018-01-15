@@ -17,12 +17,12 @@
                 <div class="text">
                   <p>{{ question.content }}</p>
                 </div>
-                <div class="actions" v-if="question.upVoters">
-                  <a class="upVoters" v-if="question.upVoters">
+                <div class="actions">
+                  <a class="upVoters" v-if="question.upVoters" @click="submitUpVote(question)">
                     {{ question.upVoters.length }}
                     <i class="thumbs outline up icon"></i>
                   </a>
-                  <a class="downVoters" v-if="question.upVoters">
+                  <a class="downVoters" v-if="question.downVoters" @click="submitDownVote(question)">
                     {{ question.downVoters.length }}
                     <i class="thumbs outline down icon"></i>
                   </a>
@@ -32,19 +32,20 @@
                   </span>
                 </div>
               </div>
-              <!-- <answer-list :user="user" :question="question"></answer-list> -->
+              <answer-list :id="id"></answer-list>
             </div>
           </div>
         </div>
       </div>
     </div>
-    {{ user }}
+    {{ question.upVoters }}
+    {{ question.downVoters }}
   </main>
 </template>
 
 <script>
 import AnswerList from '@/components/AnswerList'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 export default {
   name: 'detail',
   props: ['id'],
@@ -60,11 +61,48 @@ export default {
   methods: {
     ...mapActions([
       'getQuestionById',
-      'deleteQuestion'
+      'deleteQuestion',
+      'upVoteQuestion',
+      'downVoteQuestion'
     ]),
+    ...mapMutations(['setUpdatedQuestion']),
     submitDeleteQuestion: function (id) {
       this.deleteQuestion(id)
         .then(() => this.$router.replace({ name: 'home' }))
+    },
+    submitUpVote: function (question) {
+      // try using optimistic method
+      let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
+      let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
+
+      if (userUpVoteIndex === -1 && userDownVoteIndex === -1) { // false && false
+        question.upVoters.push(this.user._id)
+      } else if (userUpVoteIndex === -1 && userDownVoteIndex !== -1) { // false && true
+        question.downVoters.splice(userDownVoteIndex, 1)
+        question.upVoters.push(this.user._id)
+      } else if (userUpVoteIndex !== -1 && userDownVoteIndex === -1) { // true && false
+        question.upVoters.splice(userUpVoteIndex, 1)
+      }
+
+      this.setUpdatedQuestion(question)
+      this.upVoteQuestion(question._id)
+    },
+    submitDownVote: function (question) {
+      // try using optimistic method
+      let userUpVoteIndex = question.upVoters.findIndex(element => element === this.user._id)
+      let userDownVoteIndex = question.downVoters.findIndex(element => element === this.user._id)
+
+      if (userDownVoteIndex === -1 && userUpVoteIndex === -1) { // false && false
+        question.downVoters.push(this.user._id)
+      } else if (userDownVoteIndex === -1 && userUpVoteIndex !== -1) { // false && true
+        question.upVoters.splice(userUpVoteIndex, 1)
+        question.downVoters.push(this.user._id)
+      } else if (userDownVoteIndex !== -1 && userUpVoteIndex === -1) { // true && false
+        question.downVoters.splice(userDownVoteIndex, 1)
+      }
+
+      this.setUpdatedQuestion(question)
+      this.downVoteQuestion(question._id)
     }
   },
   mounted: function () {
@@ -76,13 +114,5 @@ export default {
 <style scoped>
 .ui.grid {
   margin: 1rem;
-}
-
-.ui.form textarea:not([rows]) {
-  min-height: 5em;
-}
-
-.ui.comments .reply.form textarea {
-  height: 5em;
 }
 </style>

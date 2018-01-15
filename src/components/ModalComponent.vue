@@ -10,8 +10,8 @@
             <input type="text" placeholder="title" v-model="newQuestion.title">
           </div>
           <div class="field">
-            <label>Slug</label>
-            <input type="text" placeholder="tags" v-model="newQuestion.slug">
+            <label>Slugs</label>
+            <input type="text" placeholder="separate with commas" v-model="newQuestion.slugs">
           </div>
         </div>
         <div class="field">
@@ -36,13 +36,14 @@ export default {
       newQuestion: {
         title: '',
         content: '',
-        slug: ''
+        slugs: ''
       }
     }
   },
   methods: {
     ...mapActions(['addNewQuestion']),
     submitQuestion: function () {
+      console.log('component', this.newQuestion)
       this.addNewQuestion(this.newQuestion)
     }
   }

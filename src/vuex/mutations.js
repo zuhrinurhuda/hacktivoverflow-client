@@ -2,6 +2,7 @@ const mutations = {
   setUserProfile: (state, payload) => {
     state.user = payload
   },
+  // ----------------------------------------------------------------------------------------------------
   setQuestions: (state, payload) => {
     state.questions = payload
   },
@@ -9,6 +10,10 @@ const mutations = {
     state.question = payload
   },
   setNewQuestion: (state, payload) => state.questions.unshift(payload),
+  setUpdatedQuestion: (state, payload) => {
+    state.question = payload
+  },
+  // ----------------------------------------------------------------------------------------------------
   setAnswers: (state, payload) => {
     state.answers = payload
   },
