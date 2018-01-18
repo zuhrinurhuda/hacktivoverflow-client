@@ -26,7 +26,7 @@
               </div>
               <div class="two column row">
                 <div class="column">
-                  <a class="ui small red horizontal label">{{ question.slug }}</a>
+                  <a class="ui small red horizontal label" v-for="(slug, index) in slugArr" :key="index">{{ slug }}</a>
                 </div>
                 <div class="right aligned column">
                   <p>asked on {{ new Date(question.createdAt).toLocaleDateString() }} by {{ question.author.name }}</p>
@@ -43,9 +43,18 @@
 <script>
 export default {
   name: 'summaries',
-  props: ['question']
+  props: ['question'],
+  computed: {
+    slugArr: function () {
+      let slug = this.question.slugs.trim().split(',')
+      return slug
+    }
+  }
 }
 </script>
 
-<style>
+<style scoped>
+div.two.column.row {
+  padding-top: 0;
+}
 </style>
